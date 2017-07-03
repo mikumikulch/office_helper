@@ -13,9 +13,7 @@ from datetime import datetime, timedelta
 from attendance_spider import HttpConfig
 
 """
-'利信员工考勤信息抓取蜘蛛'
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+'利信员工考勤信息抓取'
 """
 
 __author__ = 'Chuck Lin'
@@ -27,7 +25,12 @@ class LixinStaffInfoSpider(object):
     # 用于获取请求头参数
     __head_for_get_attendance_data = HttpConfig.head_for_get_attendance_data
 
+    def __init__(self) -> None:
+        super().__init__()
+
     # __post_data = {"date": "2017-6", "staffid": "6590415"}
+
+
 
     def __ungzip(self, data):
         try:  # 尝试解压
@@ -35,7 +38,7 @@ class LixinStaffInfoSpider(object):
             data = gzip.decompress(data)
             # print('解压完毕!')
         except:
-            pass
+            logging.error('解压响应数据发生异常，跳过解压处理')
         # print('未经压缩, 无需解压')
         return data
 
@@ -63,6 +66,7 @@ class LixinStaffInfoSpider(object):
         return openner
 
     def get_staff_info(self, openner, url='https://kaoqin.bangongyi.com/attend/index/record?_=1498544871927'):
+        logging.info('根据 cookiee 信息请求考勤记录')
         ssl._create_default_https_context = ssl._create_unverified_context
         now = datetime.now()
         yesterday_month = now - timedelta(days=1)
@@ -73,21 +77,24 @@ class LixinStaffInfoSpider(object):
         # request = urllib.request.Request(self.request_url, post_data, headers=LixinStaffInfoSpider.head)
         # 通过openner发送请求
         # response = urllib.request.urlopen(request)
-        print(self.__ungzip(response.read()).decode('utf-8'))
-        return
+        ungzip_response = self.__ungzip(response.read()).decode('utf-8')
+        print(ungzip_response)
+        logging.info('请求考勤记录成功')
+        return ungzip_response
 
     def get_staff_cookie(self, openner,
                          url='https://kaoqin.bangongyi.com/attend/index/index?corpid=wx7a3ce8cf2cdfb04c&t=3'):
+        logging.info('请求考勤主页面，尝试获取 cookie 信息')
         ssl._create_default_https_context = ssl._create_unverified_context
         openner.open(url)
+        logging.info('获取 cookie 信息成功')
         return
 
     def query_staff_attendance_info(self):
         openner = self.get_opener(self.__head_for_get_cookie)
         self.get_staff_cookie(openner)
         openner_with_staff_cookie = self.reset_cookies(self.__head_for_get_attendance_data, openner)
-        self.get_staff_info(openner_with_staff_cookie)
+        return self.get_staff_info(openner_with_staff_cookie)
 
 
-lixin_info_spider = LixinStaffInfoSpider()
-lixin_info_spider.query_staff_attendance_info()
+
