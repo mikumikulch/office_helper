@@ -5,21 +5,23 @@
 """
 ' 自动打印用户文件到远程打印机'
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-是的你可以试试
-
 """
+
 
 __author__ = 'Chuck Lin'
 
-from PyQt5.QtPrintSupport import QPrinter
+import cups
 
-printer = QPrinter()
-printer.setOutputFileName('test.pdf')
-printer.setOutputFormat(QPrinter.PdfFormat)
-printer.setPageSize(QPrinter.A4)
-printer.setFullPage(True)
 
-# printer.webview.print_(printer)
+
+conn = cups.Connection()
+printers = conn.getPrinters()
+
+for printer in printers:
+    print(printer, printers[printer]["device-uri"])
+
+
+
 
 
 if __name__ == '__main__':
