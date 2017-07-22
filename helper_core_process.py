@@ -11,6 +11,8 @@ import logging
 from attendance_spider.LixinStaffInfoSpider import LixinStaffInfoSpider
 from datetime import datetime, timedelta, time
 
+from make_document.overTimeHelper import reset_base_info
+
 __author__ = 'Chuck Lin'
 
 
@@ -48,8 +50,8 @@ class HelperRobot(object):
         # 判断打卡时间是否超过8点。如果超过8点，调用打印系统打印加班单。
         criterion_time = datetime(1900, 1, 1, 20, 0, 0)
         if checkout_time >= criterion_time:
-            # 当天符合加班标准，调用打印机模块
-            pass
+            # TODO 符合延迟加班条件、自动填写加班单。
+            reset_base_info(datetime.fromtimestamp(int(checkout_attr_dict['date'])), checkout_time)
         else:
             yesterday = datetime.fromtimestamp(yesterday_attendance_date).strftime('%Y-%m-%d')
             logging.info('您昨日的考勤时间 %s 未满足加班条件。程序处理结束', yesterday)
