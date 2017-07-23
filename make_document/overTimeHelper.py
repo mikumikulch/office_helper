@@ -8,54 +8,96 @@
 """
 from datetime import datetime
 
+import logging
 import docx
+import HelperConfig
+
 from docx.oxml.ns import qn
 from docx.shared import Pt
 
-doc = docx.Document('/Users/lincanhan/Desktop/加班审批表.docx')
-style = doc.styles['Normal']
+__author__ = 'Chuck Lin'
+
+g_doc = docx.Document('./document/加班审批表.docx')
+style = g_doc.styles['Normal']
 style.font.name = u'宋体'
+style.font.size = Pt(11)
 style._element.rPr.rFonts.set(qn('w:eastAsia'), u'宋体')
 
-# 备用符号 ☑
 
-def reset_form_date_paragraphs():
+# 备用符号 ☑
+def reset_form_date_paragraphs(flg):
+    if flg:
+        # 加班审批表的第一个填表日期的段落数
+        paragraph_number = 1
+    else:
+        # 加班审批表的第二个填表日期的段落数
+        paragraph_number = 5
+    # 清楚段落的内容
+    g_doc.paragraphs[paragraph_number].clear()
     # 获取填表日期段落
-    form_date_paragraphs = doc.paragraphs[1]
-    form_date_paragraphs.clear()
+    form_date_paragraphs = g_doc.paragraphs[paragraph_number]
+    # form_date_paragraphs.clear()
     now = datetime.now()
 
+    # 填写填表日期
     mutipart_date = '填表日期:%d年%d月%d日' % (now.year, now.month, now.day)
     run = form_date_paragraphs.add_run(mutipart_date, 'Default Paragraph Font')
-    # run.font.name = u'宋体'
-    # r = run._element
-    # r.rPr.rFonts.set(qn('w:eastAsia'), u'宋体')
     run.font.size = Pt(10)
-    doc.save('/Users/lincanhan/Desktop/加班审批表.docx')
-    print(doc.paragraphs[1].runs[0].text)
+    return g_doc
 
 
 def reset_base_info(checkout_date, checkout_time):
+    logging.info('开始自动填写加班模板表。checkout_date -> %s checkout_time -> %s' % (checkout_date, checkout_time))
+
+    # 获取加班单中的表格集合
     def set_tables_fontsize(x):
         x.style.font.size = Pt(11)
         return x
 
-    pre_tables = [table for table in doc.tables]
+    pre_tables = [table for table in g_doc.tables]
     tables = list(map(set_tables_fontsize, pre_tables))
-    # 填写加班事由 TODO 自动爬取近期的需求，
-    tables[0].rows[1].cells[2].text = '真量贷中新需求开发与系统遗留 bug 修正'
+
+    # 判断加班单是否已经被使用过
+    apply_name = tables[0].rows[0].cells[1].text
+    if apply_name != '  ':
+        logging.info('上部分表单已经被使用，使用下一个表单内容')
+        flg = False
+        table = tables[1]
+    else:
+        logging.info('未被使用的表单。开始填入数据')
+        flg = True
+        table = tables[0]
+    # 填写加班日期
+    reset_form_date_paragraphs(flg)  # 填写加班事由
+    # TODO 自动爬取近期的需求，
+    table.rows[1].cells[2].text = '真量贷中新需求开发与系统遗留 bug 修正'
     # 填写申请人
-    tables[0].rows[0].cells[1].text = '林灿涵'
+    table.rows[0].cells[1].text = HelperConfig.user_name
     # 填写所在部门
-    tables[0].rows[0].cells[3].text = '信息技术部门'
-    tables[0].rows[0].cells[5].text = '程序员'
+    table.rows[0].cells[3].text = '信息技术部门'
+    table.rows[0].cells[5].text = '程序员'
     # 填写加班类型
     # TODO 根据加班时间的不同，填入不同的加班类型
-    tables[0].rows[4].cells[2].text = '☑ 延时加班    □ 休息日加班    □ 法定节假日加班'
+    table.rows[4].cells[2].text = '☑ 延时加班    □ 休息日加班    □ 法定节假日加班'
     # 申请加班时间
     year, month, day, hour = checkout_date.year, checkout_date.month, checkout_date.day, checkout_time.hour
     apply_work_time = '%d 年 %d 月 %d 日  19 时 至  %d 年 %d  月  %d 日  %d 时' % (year, month, day, year, month, day, hour)
-    tables[0].rows[5].cells[2].text = apply_work_time
-    # TODO 按照固定格式填写加班模板表。
-    doc.save('/Users/lincanhan/Desktop/加班审批表.docx')
+    table.rows[5].cells[2].text = apply_work_time
+    # doc = g_doc.save('/Users/lincanhan/Desktop/加班审批表.docx')
+    return flg
 
+
+logging.info('自动填写加班模板表结束')
+
+
+def write_document(checkout_date, checkout_time):
+    flg = reset_base_info(checkout_date, checkout_time)
+    save_file_path = './document/加班审批表.docx'
+    create_file_path = './document/加班审批表_%s.docx' % (checkout_date.strftime('%Y-%m-%d'))
+    # TODO 为 true 时，创建新的文档，并附上时间。为 false 时在旧的文档上写入。
+    if not flg:
+        g_doc.save(create_file_path)
+        # TODO sendMail 与删除新增的逻辑
+        # 删除旧的加班审批表，创建新的加班审批表。
+    else:
+        g_doc.save(save_file_path)

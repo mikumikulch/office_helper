@@ -5,13 +5,12 @@
 '利信小助手核心程序'
 """
 import json
-
 import logging
 
 from attendance_spider.LixinStaffInfoSpider import LixinStaffInfoSpider
-from datetime import datetime, timedelta, time
+from datetime import datetime, timedelta
 
-from make_document.overTimeHelper import reset_base_info
+from make_document import overTimeHelper
 
 __author__ = 'Chuck Lin'
 
@@ -25,11 +24,13 @@ class HelperRobot(object):
         # 昨日的日期
         now = datetime.now()
         yesterday = now - timedelta(days=1)
-        # TODO 脚本周6或者周7目前是不运行的。另外，如果昨天是周6或者周日，则获取到周5的考勤数据。
+        # TODO 脚本周6或者周7目前是不运行的，
         if yesterday.weekday() is 5:
             yesterday = yesterday - timedelta(days=1)
         elif yesterday.weekday() is 6:
             yesterday = yesterday - timedelta(days=2)
+        elif yesterday.weekday() is 0:
+            yesterday = yesterday - timedelta(days=3)
         else:
             pass
         formated_yesterday = yesterday.strftime('%Y-%m-%d')
@@ -55,10 +56,10 @@ class HelperRobot(object):
         except BaseException:
             logging.error('您的退勤打卡时间有异常。请确认您的打卡信息。退勤打卡时间：%s', checkout_attr_dict['time'])
             return
-        # 判断打卡时间是否超过8点。如果超过8点，调用打印系统打印加班单。
         criterion_time = datetime(1900, 1, 1, 20, 0, 0)
         if checkout_time >= criterion_time:
-            reset_base_info(datetime.fromtimestamp(int(checkout_attr_dict['date'])), checkout_time)
+            # 判断打卡时间是否超过8点。如果超过8点，调用打印系统打印加班单。
+            overTimeHelper.write_document(datetime.fromtimestamp(int(checkout_attr_dict['date'])), checkout_time)
         else:
             yesterday = datetime.fromtimestamp(yesterday_attendance_date).strftime('%Y-%m-%d')
             logging.info('您昨日的考勤时间 %s 未满足加班条件。程序处理结束', yesterday)

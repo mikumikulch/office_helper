@@ -90,7 +90,7 @@ ENV/
 # Rope project settings
 .ropeproject
 
-HttpConfig.py
+HelperConfig.py
 .idea
 
 ### JetBrains template

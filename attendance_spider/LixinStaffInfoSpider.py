@@ -1,16 +1,14 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
 import gzip
-import json
 import logging
 import ssl
-import time
 import urllib
+from datetime import datetime, timedelta
 from http import cookiejar
 from urllib import request, parse
-from datetime import datetime, timedelta
 
-from attendance_spider import HttpConfig
+import HelperConfig
 
 """
 '利信员工考勤信息抓取'
@@ -21,9 +19,9 @@ __author__ = 'Chuck Lin'
 
 class LixinStaffInfoSpider(object):
     # 用于获取 cookie 设置的请求用请求头
-    __head_for_get_cookie = HttpConfig.head_for_get_cookie
+    __head_for_get_cookie = HelperConfig.head_for_get_cookie
     # 用于获取请求头参数
-    __head_for_get_attendance_data = HttpConfig.head_for_get_attendance_data
+    __head_for_get_attendance_data = HelperConfig.head_for_get_attendance_data
 
     def __init__(self) -> None:
         super().__init__()
