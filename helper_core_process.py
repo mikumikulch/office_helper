@@ -25,7 +25,15 @@ class HelperRobot(object):
         # 昨日的日期
         now = datetime.now()
         yesterday = now - timedelta(days=1)
+        # TODO 脚本周6或者周7目前是不运行的。另外，如果昨天是周6或者周日，则获取到周5的考勤数据。
+        if yesterday.weekday() is 5:
+            yesterday = yesterday - timedelta(days=1)
+        elif yesterday.weekday() is 6:
+            yesterday = yesterday - timedelta(days=2)
+        else:
+            pass
         formated_yesterday = yesterday.strftime('%Y-%m-%d')
+        # print('昨天%s是星期%s' % (formated_yesterday, yesterday.weekday()))
         return formated_yesterday == attendence_date
 
     def engin_start(self):
@@ -50,7 +58,6 @@ class HelperRobot(object):
         # 判断打卡时间是否超过8点。如果超过8点，调用打印系统打印加班单。
         criterion_time = datetime(1900, 1, 1, 20, 0, 0)
         if checkout_time >= criterion_time:
-            # TODO 符合延迟加班条件、自动填写加班单。
             reset_base_info(datetime.fromtimestamp(int(checkout_attr_dict['date'])), checkout_time)
         else:
             yesterday = datetime.fromtimestamp(yesterday_attendance_date).strftime('%Y-%m-%d')
