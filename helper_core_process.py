@@ -24,7 +24,6 @@ class HelperRobot(object):
         # 昨日的日期
         now = datetime.now()
         yesterday = now - timedelta(days=1)
-        # TODO 脚本周6或者周7目前是不运行的，
         if yesterday.weekday() is 5:
             yesterday = yesterday - timedelta(days=1)
         elif yesterday.weekday() is 6:
@@ -37,6 +36,7 @@ class HelperRobot(object):
         # print('昨天%s是星期%s' % (formated_yesterday, yesterday.weekday()))
         return formated_yesterday == attendence_date
 
+    # noinspection PyTypeChecker
     def engin_start(self):
         # 抓取当月考勤记录
         lixin_info_spider = LixinStaffInfoSpider()
@@ -66,4 +66,9 @@ class HelperRobot(object):
 
 
 robot = HelperRobot()
-robot.engin_start()
+# 最初版本脚本周6或者周7目前是不运行的，暂不支持休息日加班。
+now = datetime.now()
+if now.weekday() is 6 or now.weekday() is 0:
+    logging.info('当前日期是周6或者周日，不运行脚本。')
+else:
+    robot.engin_start()

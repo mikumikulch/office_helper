@@ -36,3 +36,6 @@ overtime_save_path = '/Users/lincanhan/Documents/工作资料/利信资料/利�
 
 # 加班人姓名
 user_name = '林灿涵'
+
+# 发件邮箱登录密码
+email_password = 'Lch1987122Base64'
