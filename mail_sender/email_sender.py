@@ -9,10 +9,11 @@ import smtplib
 
 import HelperConfig
 
-from_addr_and_user = 'lincanhan@hotmail.com'
+# 设置发件人账户与密码，发件服务器，收件人账户
+from_addr_and_user = HelperConfig.from_addr_and_user
 password = HelperConfig.email_password
-to_addr = 'lincanhan@lixin360.com'
-smtp_server = '42.120.219.29'
+to_addr =  HelperConfig.to_addr
+smtp_server = HelperConfig.smtp_server
 
 
 def send_mail(mail_title, attachment_path, file_name):
@@ -47,9 +48,12 @@ def send_mail(mail_title, attachment_path, file_name):
 
     try:
         server = smtplib.SMTP(smtp_server, 25)
-        server.set_debuglevel(1)
+        # server.set_debuglevel(1)
         server.login(from_addr_and_user, password)
+        # server.ehlo()
+        server.starttls()
+        # server.ehlo()
         server.sendmail(from_addr_and_user, [to_addr], msg.as_string())
         server.quit()
-    except smtplib.SMTPException:
-        print("Error: 邮件发送失败")
+    except smtplib.SMTPException as e:
+        print("Error: 邮件发送失败", e)

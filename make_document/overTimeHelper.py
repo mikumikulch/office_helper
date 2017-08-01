@@ -19,7 +19,7 @@ from mail_sender import email_sender
 
 __author__ = 'Chuck Lin'
 
-g_doc = docx.Document('./document/加班审批表.docx')
+g_doc = docx.Document('make_document/document/加班审批表.docx')
 style = g_doc.styles['Normal']
 style.font.name = u'宋体'
 style.font.size = Pt(11)
@@ -85,26 +85,23 @@ def write_info_to_memory(checkout_date, checkout_time):
     year, month, day, hour = checkout_date.year, checkout_date.month, checkout_date.day, checkout_time.hour
     apply_work_time = '%d 年 %d 月 %d 日  19 时 至  %d 年 %d  月  %d 日  %d 时' % (year, month, day, year, month, day, hour)
     table.rows[5].cells[2].text = apply_work_time
-    # doc = g_doc.save('/Users/lincanhan/Desktop/加班审批表.docx')
     return flg
-
-
-logging.info('自动填写加班模板表结束')
 
 
 def write_document(checkout_date, checkout_time):
     flg = write_info_to_memory(checkout_date, checkout_time)
-    save_file_path = './document/加班审批表.docx'
-    create_file_path = './document/加班审批表_%s.docx' % (datetime.now().strftime('%Y-%m-%d'))
-
+    save_file_path = 'make_document/document/加班审批表.docx'
+    create_file_path = 'make_document/document/加班审批表_%s.docx' % (datetime.now().strftime('%Y-%m-%d'))
     # 为 true 时在旧的文档上写入。
     if flg:
         g_doc.save(save_file_path)
+        logging.info('自动写入加班审批表处理结束')
     # flg 为 false 时，代表目前文档已经写满。将会创建新的文档，并附上时间。并读取模板的内容覆盖掉目前的加班审批表
     else:
         g_doc.save(create_file_path)
         attachment_name = '加班审批表_%s' % datetime.now().strftime('%Y-%m-%d')
         email_sender.send_mail('【利信办公小助手】加班审批表_%s' % datetime.now().strftime('%Y-%m-%d'), create_file_path,
                                attachment_name)
-        template_doc = docx.Document('./document/加班审批表_模板.docx')
+        template_doc = docx.Document('make_document/document/加班审批表_模板.docx')
         template_doc.save(save_file_path)
+        logging.info('自动写入加班审批表并且发送邮件完毕')

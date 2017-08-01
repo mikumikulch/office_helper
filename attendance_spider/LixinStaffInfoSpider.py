@@ -67,8 +67,12 @@ class LixinStaffInfoSpider(object):
         logging.info('根据 cookiee 信息请求考勤记录')
         ssl._create_default_https_context = ssl._create_unverified_context
         now = datetime.now()
+        # 如果今天是月初，则获取上一个月的数据。
         yesterday_month = now - timedelta(days=1)
-        formated_month = now.strftime('%Y-%m')
+        if now.month == 1:
+            formated_month = yesterday_month.strftime('%Y-%m')
+        else:
+            formated_month = now.strftime('%Y-%m')
         post_data = {"date": formated_month, "staffid": "6590415"}
         post_data = parse.urlencode(post_data).encode()
         response = openner.open(url, post_data)
@@ -93,6 +97,3 @@ class LixinStaffInfoSpider(object):
         self.get_staff_cookie(openner)
         openner_with_staff_cookie = self.reset_cookies(self.__head_for_get_attendance_data, openner)
         return self.get_staff_info(openner_with_staff_cookie)
-
-
-

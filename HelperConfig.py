@@ -37,5 +37,11 @@ overtime_save_path = '/Users/lincanhan/Documents/工作资料/利信资料/利�
 # 加班人姓名
 user_name = '林灿涵'
 
+# 发送邮件用账户
+from_addr_and_user = 'lincanhan@lixin360.com'
 # 发件邮箱登录密码
-email_password = 'Lch1987122Base64'
+email_password = 'NtC7j25fXDicYKhL'
+# 发件服务器
+smtp_server = 'smtp.exmail.qq.com'
+# 收件人账户
+to_addr = 'lincanhan@lixin360.com'
