@@ -53,7 +53,7 @@ def send_mail(mail_title, attachment_path, file_name):
 
     try:
         logger.debug('开始发送邮件到用户')
-        server = smtplib.SMTP(smtp_server, 25)
+        server = smtplib.SMTP(smtp_server, 587)
         # server.set_debuglevel(1)
         server.login(from_addr_and_user, password)
         # server.ehlo()

@@ -62,11 +62,18 @@ def write_info_to_memory(checkout_date, checkout_time):
     pre_tables = [table for table in g_doc.tables]
     tables = list(map(set_tables_fontsize, pre_tables))
 
-    # 判断当前加班单是否已经被使用过
     apply_name = tables[0].rows[0].cells[1].text
-    if apply_name != '  ':
-        logging.debug('上部分表单已经被使用，使用下一个表单内容')
+    apply_name_2 = tables[1].rows[0].cells[1].text
+    if apply_name_2 != '　':
+        logging.debug('所有表单已经被使用，建立新的加班审批表填写内容')
         flg = False
+        local_doc = docx.Document('make_document/document/加班审批表_模板.docx')
+        pre_tables = [table for table in local_doc.tables]
+        tables = list(map(set_tables_fontsize, pre_tables))
+        table = tables[0]
+    elif apply_name != '　':
+        logging.debug('上部分表单已经被使用，使用下一个表单内容')
+        flg = True
         table = tables[1]
     else:
         logging.debug('未被使用的表单。开始填入数据')
@@ -107,4 +114,5 @@ def write_document(checkout_date, checkout_time):
                                attachment_name)
         template_doc = docx.Document('make_document/document/加班审批表_模板.docx')
         template_doc.save(save_file_path)
+        # TODO 删除前几日的 word 文档，防止 word 文档过多。
         logging.info('自动写入加班审批表并且发送邮件完毕')

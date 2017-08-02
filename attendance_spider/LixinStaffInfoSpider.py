@@ -88,7 +88,7 @@ class LixinStaffInfoSpider(object):
 
     def get_staff_cookie(self, openner,
                          url='https://kaoqin.bangongyi.com/attend/index/index?corpid=wx7a3ce8cf2cdfb04c&t=3'):
-        logger.info('请求考勤主页面，尝试获取 cookie 信息')
+        logger.debug('请求考勤主页面，尝试获取 cookie 信息')
         ssl._create_default_https_context = ssl._create_unverified_context
         openner.open(url)
         logger.debug('获取 cookie 信息成功')

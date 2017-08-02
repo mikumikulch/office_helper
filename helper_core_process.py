@@ -78,6 +78,9 @@ class HelperRobot(object):
             yesterday = datetime.fromtimestamp(yesterday_attendance_date).strftime('%Y-%m-%d')
             logger.info('您昨日的考勤时间 %s 未满足加班条件。程序处理结束', yesterday)
             logger.debug('利信办公小助手机器人运行结束')
+        logger.debug('考勤记录抓取完毕，昨日加班时间超过8点，调用加班助手填写加班审批单')
+        # # 判断打卡时间是否超过8点。如果超过8点，调用打印系统打印加班单。
+        # overTimeHelper.write_document(datetime.fromtimestamp(int(checkout_attr_dict['date'])), checkout_time)
 
 
 logger.debug('利信办公小助手机器人运行开始')
