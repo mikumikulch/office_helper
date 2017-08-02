@@ -7,7 +7,12 @@ from email.mime.text import MIMEText
 
 import smtplib
 
+import logging
+
 import HelperConfig
+
+logger_name = 'office_helper'
+logger = logging.getLogger(logger_name)
 
 # 设置发件人账户与密码，发件服务器，收件人账户
 from_addr_and_user = HelperConfig.from_addr_and_user
@@ -47,6 +52,7 @@ def send_mail(mail_title, attachment_path, file_name):
     #     msg.attach(mime)
 
     try:
+        logger.debug('开始发送邮件到用户')
         server = smtplib.SMTP(smtp_server, 25)
         # server.set_debuglevel(1)
         server.login(from_addr_and_user, password)
@@ -54,6 +60,7 @@ def send_mail(mail_title, attachment_path, file_name):
         server.starttls()
         # server.ehlo()
         server.sendmail(from_addr_and_user, [to_addr], msg.as_string())
+        logger.debug('邮件发送成功')
         server.quit()
     except smtplib.SMTPException as e:
-        print("Error: 邮件发送失败", e)
+        logger.error("Error: 邮件发送失败", e)

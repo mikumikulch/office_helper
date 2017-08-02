@@ -16,6 +16,8 @@ import HelperConfig
 
 __author__ = 'Chuck Lin'
 
+logger_name = 'office_helper'
+logger = logging.getLogger(logger_name)
 
 class LixinStaffInfoSpider(object):
     # 用于获取 cookie 设置的请求用请求头
@@ -36,7 +38,7 @@ class LixinStaffInfoSpider(object):
             data = gzip.decompress(data)
             # print('解压完毕!')
         except:
-            logging.error('解压响应数据发生异常，跳过解压处理')
+            logger.error('解压响应数据发生异常，跳过解压处理')
         # print('未经压缩, 无需解压')
         return data
 
@@ -64,12 +66,12 @@ class LixinStaffInfoSpider(object):
         return openner
 
     def get_staff_info(self, openner, url='https://kaoqin.bangongyi.com/attend/index/record?_=1498544871927'):
-        logging.info('根据 cookiee 信息请求考勤记录')
+        logger.debug('根据 cookiee 信息请求考勤记录')
         ssl._create_default_https_context = ssl._create_unverified_context
         now = datetime.now()
         # 如果今天是月初，则获取上一个月的数据。
         yesterday_month = now - timedelta(days=1)
-        if now.month == 1:
+        if now.day == 1:
             formated_month = yesterday_month.strftime('%Y-%m')
         else:
             formated_month = now.strftime('%Y-%m')
@@ -80,16 +82,16 @@ class LixinStaffInfoSpider(object):
         # 通过openner发送请求
         # response = urllib.request.urlopen(request)
         ungzip_response = self.__ungzip(response.read()).decode('utf-8')
-        print(ungzip_response)
-        logging.info('请求考勤记录成功')
+        logger.debug(ungzip_response)
+        logger.debug('请求考勤记录成功')
         return ungzip_response
 
     def get_staff_cookie(self, openner,
                          url='https://kaoqin.bangongyi.com/attend/index/index?corpid=wx7a3ce8cf2cdfb04c&t=3'):
-        logging.info('请求考勤主页面，尝试获取 cookie 信息')
+        logger.info('请求考勤主页面，尝试获取 cookie 信息')
         ssl._create_default_https_context = ssl._create_unverified_context
         openner.open(url)
-        logging.info('获取 cookie 信息成功')
+        logger.debug('获取 cookie 信息成功')
         return
 
     def query_staff_attendance_info(self):

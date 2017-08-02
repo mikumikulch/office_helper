@@ -14,6 +14,19 @@ from make_document import overTimeHelper
 
 __author__ = 'Chuck Lin'
 
+logger_name = 'office_helper'
+logger = logging.getLogger(logger_name)
+logger.setLevel(logging.INFO)
+
+fh = logging.FileHandler('make_document/attandence.log', encoding='utf8')
+fh.setLevel(logging.INFO)
+
+fmt = "%(asctime)-15s %(levelname)s %(filename)s %(lineno)d %(process)d %(message)s"
+datefmt = "%a %d %b %Y %H:%M:%S"
+formatter = logging.Formatter(fmt, datefmt)
+fh.setFormatter(formatter)
+logger.addHandler(fh)
+
 
 class HelperRobot(object):
     def __init__(self) -> None:
@@ -36,8 +49,8 @@ class HelperRobot(object):
 
     # noinspection PyTypeChecker
     def engin_start(self):
-        logging.info('开始抓取昨日考勤记录')
-        # 抓取当月考勤记录
+        logger.debug('开始抓取昨日考勤记录')
+        # 抓取当月或者上一个月考勤记录
         lixin_info_spider = LixinStaffInfoSpider()
         staff_attendance_info_json = json.loads(lixin_info_spider.query_staff_attendance_info())
         # 获取当月考勤记录的 dict 数据
@@ -54,24 +67,24 @@ class HelperRobot(object):
         try:
             checkout_time = datetime.strptime(checkout_attr_dict['time'], '%H:%M:%S')
         except BaseException:
-            logging.error('您的退勤打卡时间有异常。请确认您的打卡信息。退勤打卡时间：%s', checkout_attr_dict['time'])
+            logger.error('您的退勤打卡时间有异常。请确认您的打卡信息。退勤打卡时间：%s', checkout_attr_dict['time'])
             return
         criterion_time = datetime(1900, 1, 1, 20, 0, 0)
         if checkout_time >= criterion_time:
-            logging.info('考勤记录抓取完毕，昨日加班时间超过8点，调用加班助手填写加班审批单')
+            logger.debug('考勤记录抓取完毕，昨日加班时间超过8点，调用加班助手填写加班审批单')
             # 判断打卡时间是否超过8点。如果超过8点，调用打印系统打印加班单。
             overTimeHelper.write_document(datetime.fromtimestamp(int(checkout_attr_dict['date'])), checkout_time)
         else:
             yesterday = datetime.fromtimestamp(yesterday_attendance_date).strftime('%Y-%m-%d')
-            logging.info('您昨日的考勤时间 %s 未满足加班条件。程序处理结束', yesterday)
-        logging.info('利信办公小助手机器人运行结束')
+            logger.info('您昨日的考勤时间 %s 未满足加班条件。程序处理结束', yesterday)
+            logger.debug('利信办公小助手机器人运行结束')
 
 
-logging.info('利信办公小助手机器人运行开始')
+logger.debug('利信办公小助手机器人运行开始')
 robot = HelperRobot()
 # 最初版本脚本周6或者周7目前是不运行的，暂不支持休息日加班。
 now = datetime.now()
 if now.weekday() is 6 or now.weekday() is 0:
-    logging.info('当前日期是周6或者周日，不运行脚本。')
+    logger.info('当前日期是周6或者周日，不运行脚本。')
 else:
     robot.engin_start()

@@ -17,6 +17,9 @@ from docx.shared import Pt
 
 from mail_sender import email_sender
 
+logger_name = 'office_helper'
+logger = logging.getLogger(logger_name)
+
 __author__ = 'Chuck Lin'
 
 g_doc = docx.Document('make_document/document/加班审批表.docx')
@@ -49,7 +52,7 @@ def reset_form_date_paragraphs(flg):
 
 
 def write_info_to_memory(checkout_date, checkout_time):
-    logging.info('开始自动填写加班模板表。checkout_date -> %s checkout_time -> %s' % (checkout_date, checkout_time))
+    logging.debug('开始自动填写加班模板表。checkout_date -> %s checkout_time -> %s' % (checkout_date, checkout_time))
 
     # 获取加班单中的表格集合
     def set_tables_fontsize(x):
@@ -62,11 +65,11 @@ def write_info_to_memory(checkout_date, checkout_time):
     # 判断当前加班单是否已经被使用过
     apply_name = tables[0].rows[0].cells[1].text
     if apply_name != '  ':
-        logging.info('上部分表单已经被使用，使用下一个表单内容')
+        logging.debug('上部分表单已经被使用，使用下一个表单内容')
         flg = False
         table = tables[1]
     else:
-        logging.info('未被使用的表单。开始填入数据')
+        logging.debug('未被使用的表单。开始填入数据')
         flg = True
         table = tables[0]
     # 填写加班日期填写时间项
@@ -95,7 +98,7 @@ def write_document(checkout_date, checkout_time):
     # 为 true 时在旧的文档上写入。
     if flg:
         g_doc.save(save_file_path)
-        logging.info('自动写入加班审批表处理结束')
+        logging.debug('自动写入加班审批表处理结束')
     # flg 为 false 时，代表目前文档已经写满。将会创建新的文档，并附上时间。并读取模板的内容覆盖掉目前的加班审批表
     else:
         g_doc.save(create_file_path)
