@@ -18,6 +18,16 @@ __author__ = 'Chuck Lin'
 
 logger_name = 'office_helper'
 logger = logging.getLogger(logger_name)
+logger.setLevel(logging.INFO)
+
+fh = logging.FileHandler('make_document/attandence.log', encoding='utf8')
+fh.setLevel(logging.INFO)
+
+fmt = "%(asctime)-15s %(levelname)s %(filename)s %(lineno)d %(process)d %(message)s"
+datefmt = "%a %d %b %Y %H:%M:%S"
+formatter = logging.Formatter(fmt, datefmt)
+fh.setFormatter(formatter)
+logger.addHandler(fh)
 
 class LixinStaffInfoSpider(object):
     # 用于获取 cookie 设置的请求用请求头
@@ -66,7 +76,7 @@ class LixinStaffInfoSpider(object):
         return openner
 
     def get_staff_info(self, openner, url='https://kaoqin.bangongyi.com/attend/index/record?_=1498544871927'):
-        logger.debug('根据 cookiee 信息请求考勤记录')
+        logger.info('根据 cookiee 信息请求考勤记录')
         ssl._create_default_https_context = ssl._create_unverified_context
         now = datetime.now()
         # 如果今天是月初，则获取上一个月的数据。
@@ -83,15 +93,15 @@ class LixinStaffInfoSpider(object):
         # response = urllib.request.urlopen(request)
         ungzip_response = self.__ungzip(response.read()).decode('utf-8')
         logger.debug(ungzip_response)
-        logger.debug('请求考勤记录成功')
+        logger.info('请求考勤记录成功')
         return ungzip_response
 
     def get_staff_cookie(self, openner,
                          url='https://kaoqin.bangongyi.com/attend/index/index?corpid=wx7a3ce8cf2cdfb04c&t=3'):
-        logger.debug('请求考勤主页面，尝试获取 cookie 信息')
+        logger.info('请求考勤主页面，尝试获取 cookie 信息')
         ssl._create_default_https_context = ssl._create_unverified_context
         openner.open(url)
-        logger.debug('获取 cookie 信息成功')
+        logger.info('获取 cookie 信息成功')
         return
 
     def query_staff_attendance_info(self):

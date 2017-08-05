@@ -13,6 +13,16 @@ import HelperConfig
 
 logger_name = 'office_helper'
 logger = logging.getLogger(logger_name)
+logger.setLevel(logging.INFO)
+
+fh = logging.FileHandler('make_document/attandence.log', encoding='utf8')
+fh.setLevel(logging.INFO)
+
+fmt = "%(asctime)-15s %(levelname)s %(filename)s %(lineno)d %(process)d %(message)s"
+datefmt = "%a %d %b %Y %H:%M:%S"
+formatter = logging.Formatter(fmt, datefmt)
+fh.setFormatter(formatter)
+logger.addHandler(fh)
 
 # 设置发件人账户与密码，发件服务器，收件人账户
 from_addr_and_user = HelperConfig.from_addr_and_user
@@ -23,10 +33,12 @@ smtp_server = HelperConfig.smtp_server
 
 def send_mail(mail_title, attachment_path, file_name):
     msg = MIMEMultipart()
-    from_name = 'LinCanHan <%s>' % from_addr_and_user
-    to_name = 'LiuCanHan <%s>' % to_addr
-    msg['From'] = Header(from_name, 'utf-8')
-    msg['To'] = Header(to_name, 'utf-8')
+    from_name = from_addr_and_user
+    to_name = to_addr
+    # msg['From'] = Header(from_name, 'utf-8')
+    # msg['To'] = Header(to_name, 'utf-8')
+    msg['From'] = from_name
+    msg['To'] = to_name
     msg['Subject'] = Header(mail_title, 'utf-8').encode()
     msg.attach(MIMEText('本邮件由机器人自动发送.有问题请联系发件人', 'plain', 'utf-8'))
 
@@ -52,15 +64,12 @@ def send_mail(mail_title, attachment_path, file_name):
     #     msg.attach(mime)
 
     try:
-        logger.debug('开始发送邮件到用户')
-        server = smtplib.SMTP(smtp_server, 587)
+        logger.info('开始发送邮件到用户')
+        server = smtplib.SMTP(smtp_server)
         # server.set_debuglevel(1)
         server.login(from_addr_and_user, password)
-        # server.ehlo()
-        server.starttls()
-        # server.ehlo()
         server.sendmail(from_addr_and_user, [to_addr], msg.as_string())
-        logger.debug('邮件发送成功')
+        logger.info('邮件发送成功')
         server.quit()
     except smtplib.SMTPException as e:
         logger.error("Error: 邮件发送失败", e)

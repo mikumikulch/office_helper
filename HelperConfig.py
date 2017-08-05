@@ -38,10 +38,10 @@ overtime_save_path = '/Users/lincanhan/Documents/工作资料/利信资料/利�
 user_name = '林灿涵'
 
 # 发送邮件用账户
-from_addr_and_user = 'mikumiku.lch@icloud.com'
+from_addr_and_user = 'chuck_lch@sina.com'
 # 发件邮箱登录密码
-email_password = 'Lch1987122Base64'
+email_password = 'eRU-g54-dPs-mXx'
 # 发件服务器
-smtp_server = 'smtp.mail.me.com'
+smtp_server = 'smtp.sina.com'
 # 收件人账户
 to_addr = 'lincanhan@lixin360.com'
