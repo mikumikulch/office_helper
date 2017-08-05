@@ -11,3 +11,9 @@
 # 如何运行
 
 施工中
+
+# License
+[MIT License](https://choosealicense.com/licenses/mit/)
+
+项目严格遵守 Mit License 。你可以在署名原作者的情况下使用任何方式使用本代码。
+但原作者但不承担代码使用后的风险，也没有技术支持的义务。
