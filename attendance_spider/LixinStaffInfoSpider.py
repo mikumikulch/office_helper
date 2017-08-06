@@ -1,5 +1,13 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
+
+"""
+根据配置文件获取相应用户的考勤日志与记录
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""
+
+__author__ = 'Chuck Lin'
+
 import gzip
 import ssl
 import urllib

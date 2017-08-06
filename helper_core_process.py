@@ -2,8 +2,13 @@
 # -*- coding:utf-8 -*-
 
 """
-'利信小助手核心程序'
+利信小助手核心程序
+负责调用其他模块完成任务
 """
+
+__author__ = 'Chuck Lin'
+
+
 import json
 import logging
 from logging.handlers import RotatingFileHandler

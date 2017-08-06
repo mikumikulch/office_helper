@@ -1,5 +1,14 @@
 # -*- coding:utf-8 -*-
 # 利信360 林灿涵
+
+
+"""
+邮件发送模块
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""
+
+__author__ = 'Chuck Lin'
+
 from email import encoders
 from email.header import Header
 from email.mime.multipart import MIMEMultipart
