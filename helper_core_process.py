@@ -17,15 +17,16 @@ logger_name = 'office_helper'
 logger = logging.getLogger(logger_name)
 logger.setLevel(logging.INFO)
 #最多备份5个日志文件，每个日志文件最大10M，当最新内容超出限度后将会覆盖最旧的内容
-Rthandler = RotatingFileHandler('make_document/attandence.log', maxBytes=10*1024*1024,backupCount=5)
-fh = logging.FileHandler('make_document/attandence.log', encoding='utf8')
-fh.setLevel(logging.INFO)
-
+Rthandler = RotatingFileHandler('make_document/attandence.log', maxBytes=10 * 1024 * 1024, backupCount=5, encoding='utf8')
+# fh = logging.FileHandler('make_document/attandence.log', encoding='utf8')
+# fh.setLevel(logging.INFO)
 fmt = "%(asctime)-15s %(levelname)s %(filename)s %(lineno)d %(process)d %(message)s"
 datefmt = "%a %d %b %Y %H:%M:%S"
 formatter = logging.Formatter(fmt, datefmt)
-fh.setFormatter(formatter)
-logger.addHandler(fh)
+Rthandler.setFormatter(formatter)
+Rthandler.setLevel(logging.INFO)
+# fh.setFormatter(formatter)
+# logger.addHandler(fh)
 logger.addHandler(Rthandler)
 
 __author__ = 'Chuck Lin'
