@@ -11,20 +11,11 @@ import logging
 
 import HelperConfig
 
-logger_name = 'office_helper'
-logger = logging.getLogger(logger_name)
-logger.setLevel(logging.INFO)
-
-fh = logging.FileHandler('make_document/attandence.log', encoding='utf8')
-fh.setLevel(logging.INFO)
-
-fmt = "%(asctime)-15s %(levelname)s %(filename)s %(lineno)d %(process)d %(message)s"
-datefmt = "%a %d %b %Y %H:%M:%S"
-formatter = logging.Formatter(fmt, datefmt)
-fh.setFormatter(formatter)
-logger.addHandler(fh)
 
 # 设置发件人账户与密码，发件服务器，收件人账户
+logger_name = 'office_helper'
+logger = logging.getLogger(logger_name)
+
 from_addr_and_user = HelperConfig.from_addr_and_user
 password = HelperConfig.email_password
 to_addr =  HelperConfig.to_addr

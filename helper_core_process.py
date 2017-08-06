@@ -6,18 +6,18 @@
 """
 import json
 import logging
+from logging.handlers import RotatingFileHandler
 
 from attendance_spider.LixinStaffInfoSpider import LixinStaffInfoSpider
+from make_document import overTimeHelper
 from datetime import datetime, timedelta
 
-from make_document import overTimeHelper
-
-__author__ = 'Chuck Lin'
 
 logger_name = 'office_helper'
 logger = logging.getLogger(logger_name)
 logger.setLevel(logging.INFO)
-
+#最多备份5个日志文件，每个日志文件最大10M，当最新内容超出限度后将会覆盖最旧的内容
+Rthandler = RotatingFileHandler('make_document/attandence.log', maxBytes=10*1024*1024,backupCount=5)
 fh = logging.FileHandler('make_document/attandence.log', encoding='utf8')
 fh.setLevel(logging.INFO)
 
@@ -26,6 +26,9 @@ datefmt = "%a %d %b %Y %H:%M:%S"
 formatter = logging.Formatter(fmt, datefmt)
 fh.setFormatter(formatter)
 logger.addHandler(fh)
+logger.addHandler(Rthandler)
+
+__author__ = 'Chuck Lin'
 
 
 class HelperRobot(object):
@@ -78,9 +81,6 @@ class HelperRobot(object):
             yesterday = datetime.fromtimestamp(yesterday_attendance_date).strftime('%Y-%m-%d')
             logger.info('您昨日的考勤时间 %s 未满足加班条件。程序处理结束', yesterday)
             logger.info('利信办公小助手机器人运行结束')
-        logger.info('考勤记录抓取完毕，昨日加班时间超过8点，调用加班助手填写加班审批单')
-        # # 判断打卡时间是否超过8点。如果超过8点，调用打印系统打印加班单。
-        # overTimeHelper.write_document(datetime.fromtimestamp(int(checkout_attr_dict['date'])), checkout_time)
 
 
 logger.info('利信办公小助手机器人运行开始')

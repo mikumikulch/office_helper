@@ -1,14 +1,18 @@
 #!/usr/bin/python3
 # -*- coding:utf-8 -*-
 import gzip
-import logging
 import ssl
 import urllib
 from datetime import datetime, timedelta
 from http import cookiejar
 from urllib import request, parse
 
+import logging
+
 import HelperConfig
+
+logger_name = 'office_helper'
+logger = logging.getLogger(logger_name)
 
 """
 '利信员工考勤信息抓取'
@@ -16,18 +20,6 @@ import HelperConfig
 
 __author__ = 'Chuck Lin'
 
-logger_name = 'office_helper'
-logger = logging.getLogger(logger_name)
-logger.setLevel(logging.INFO)
-
-fh = logging.FileHandler('make_document/attandence.log', encoding='utf8')
-fh.setLevel(logging.INFO)
-
-fmt = "%(asctime)-15s %(levelname)s %(filename)s %(lineno)d %(process)d %(message)s"
-datefmt = "%a %d %b %Y %H:%M:%S"
-formatter = logging.Formatter(fmt, datefmt)
-fh.setFormatter(formatter)
-logger.addHandler(fh)
 
 class LixinStaffInfoSpider(object):
     # 用于获取 cookie 设置的请求用请求头
