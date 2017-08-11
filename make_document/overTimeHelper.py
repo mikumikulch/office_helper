@@ -6,6 +6,8 @@
 最后发送回邮件到邮箱、提示打印。打印功能也许可以用 applescript+pages 实现？
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
+import os
+import re
 
 __author__ = 'Chuck Lin'
 
@@ -21,7 +23,6 @@ from docx.oxml.ns import qn
 from docx.shared import Pt
 
 from mail_sender import email_sender
-
 logger_name = 'office_helper'
 logger = logging.getLogger(logger_name)
 
@@ -36,6 +37,7 @@ style._element.rPr.rFonts.set(qn('w:eastAsia'), u'宋体')
 
 # 备用符号 ☑
 def reset_form_date_paragraphs(flg):
+    #TODO 写入第二个表格的填表日期时有 bug，会写到第一个表格上去。
     if flg:
         # 加班审批表的第一个填表日期的段落数
         paragraph_number = 1
@@ -107,6 +109,12 @@ def write_document(checkout_date, checkout_time):
     flg = write_info_to_memory(checkout_date, checkout_time)
     save_file_path = 'make_document/document/加班审批表.docx'
     create_file_path = 'make_document/document/加班审批表_%s.docx' % (datetime.now().strftime('%Y-%m-%d'))
+    # TODO 删除前几日的 word 文档，防止 word 文档过多。匹配正则表达式，删除匹配正则的加班审批表
+    # 列出当前目录下的所有.docx 文件
+    # docx_list = [x for x in os.listdir('./document/') if os.path.isfile(x) and os.path.splitext(x)[1] == '.docx']
+    # if len(docx_list) >= 12:
+    #     list(filter(lambda x: re.match(r'^\d{3}\-\d{3,8}$', x),docx_list))
+    # TODO 遍历目录下所有文件，筛选出正则表达式匹配的日期文件，并删除这些相应的文件。
     # 为 true 时在旧的文档上写入。
     if flg:
         g_doc.save(save_file_path)
@@ -115,9 +123,9 @@ def write_document(checkout_date, checkout_time):
     else:
         g_doc.save(create_file_path)
         attachment_name = '加班审批表_%s' % datetime.now().strftime('%Y-%m-%d')
+        ## TODO 应该是2个表填写完毕，还未更新时就应该发送邮件。目前的逻辑是再运行一次才发送邮件。
         email_sender.send_mail('【利信办公小助手】加班审批表_%s' % datetime.now().strftime('%Y-%m-%d'), create_file_path,
                                attachment_name)
         template_doc = docx.Document('make_document/document/加班审批表_模板.docx')
         template_doc.save(save_file_path)
-        # TODO 删除前几日的 word 文档，防止 word 文档过多。
         logger.info('自动写入加班审批表并且发送邮件完毕')
