@@ -37,7 +37,6 @@ style._element.rPr.rFonts.set(qn('w:eastAsia'), u'宋体')
 
 # 备用符号 ☑
 def reset_form_date_paragraphs(flg):
-    #TODO 写入第二个表格的填表日期时有 bug，会写到第一个表格上去。
     if flg:
         # 加班审批表的第一个填表日期的段落数
         paragraph_number = 1
@@ -73,14 +72,14 @@ def write_info_to_memory(checkout_date, checkout_time):
     apply_name_2 = tables[1].rows[0].cells[1].text
     if apply_name_2 != '　':
         logger.info('所有表单已经被使用，建立新的加班审批表填写内容')
-        flg = False
+        flg = True
         local_doc = docx.Document('make_document/document/加班审批表_模板.docx')
         pre_tables = [table for table in local_doc.tables]
         tables = list(map(set_tables_fontsize, pre_tables))
         table = tables[0]
     elif apply_name != '　':
-        logger.info('上部分表单已经被使用，使用下一个表单内容')
-        flg = True
+        logger.info('上部分表单已经被使用，使用下半部分表单的内容')
+        flg = False
         table = tables[1]
     else:
         logger.info('未被使用的表单。开始填入数据')
@@ -123,7 +122,6 @@ def write_document(checkout_date, checkout_time):
     else:
         g_doc.save(create_file_path)
         attachment_name = '加班审批表_%s' % datetime.now().strftime('%Y-%m-%d')
-        ## TODO 应该是2个表填写完毕，还未更新时就应该发送邮件。目前的逻辑是再运行一次才发送邮件。
         email_sender.send_mail('【利信办公小助手】加班审批表_%s' % datetime.now().strftime('%Y-%m-%d'), create_file_path,
                                attachment_name)
         template_doc = docx.Document('make_document/document/加班审批表_模板.docx')
