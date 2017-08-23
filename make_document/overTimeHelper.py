@@ -110,10 +110,9 @@ def write_document(checkout_date, checkout_time):
     create_file_path = 'make_document/document/加班审批表_%s.docx' % (datetime.now().strftime('%Y-%m-%d'))
     # TODO 删除前几日的 word 文档，防止 word 文档过多。匹配正则表达式，删除匹配正则的加班审批表
     # 列出当前目录下的所有.docx 文件
-    # docx_list = [x for x in os.listdir('./document/') if os.path.isfile(x) and os.path.splitext(x)[1] == '.docx']
+    docx_list = [x for x in os.listdir('./document/') if os.path.isfile(x) and os.path.splitext(x)[1] == '.docx']
     # if len(docx_list) >= 12:
     #     list(filter(lambda x: re.match(r'^\d{3}\-\d{3,8}$', x),docx_list))
-    # TODO 遍历目录下所有文件，筛选出正则表达式匹配的日期文件，并删除这些相应的文件。
     # 为 true 时在旧的文档上写入。
     if flg:
         g_doc.save(save_file_path)
@@ -121,7 +120,7 @@ def write_document(checkout_date, checkout_time):
     # flg 为 false 时，代表目前文档已经写满。将会创建新的文档，并附上时间。并读取模板的内容覆盖掉目前的加班审批表
     else:
         g_doc.save(create_file_path)
-        attachment_name = '加班审批表_%s' % datetime.now().strftime('%Y-%m-%d')
+        attachment_name = '加班审批表_%s.docx' % datetime.now().strftime('%Y-%m-%d')
         email_sender.send_mail('【利信办公小助手】加班审批表_%s' % datetime.now().strftime('%Y-%m-%d'), create_file_path,
                                attachment_name)
         template_doc = docx.Document('make_document/document/加班审批表_模板.docx')
