@@ -11,7 +11,6 @@ import re
 
 __author__ = 'Chuck Lin'
 
-
 from datetime import datetime
 
 import docx
@@ -23,6 +22,7 @@ from docx.oxml.ns import qn
 from docx.shared import Pt
 
 from mail_sender import email_sender
+
 logger_name = 'office_helper'
 logger = logging.getLogger(logger_name)
 
@@ -33,6 +33,11 @@ style = g_doc.styles['Normal']
 style.font.name = u'宋体'
 style.font.size = Pt(11)
 style._element.rPr.rFonts.set(qn('w:eastAsia'), u'宋体')
+
+
+def ot_file_remover(x):
+    if len(x) > 13:
+        os.remove('./document/%s' % x)
 
 
 # 备用符号 ☑
@@ -108,9 +113,11 @@ def write_document(checkout_date, checkout_time):
     flg = write_info_to_memory(checkout_date, checkout_time)
     save_file_path = 'make_document/document/加班审批表.docx'
     create_file_path = 'make_document/document/加班审批表_%s.docx' % (datetime.now().strftime('%Y-%m-%d'))
-    # TODO 删除前几日的 word 文档，防止 word 文档过多。匹配正则表达式，删除匹配正则的加班审批表
-    # 列出当前目录下的所有.docx 文件
-    docx_list = [x for x in os.listdir('./document/') if os.path.isfile(x) and os.path.splitext(x)[1] == '.docx']
+    # 为防止留存的加班表过度，当文档数量大于30时，删除除模板文档以外的所有文档。
+    docx_list = [x for x in os.listdir('./document') if os.path.splitext(x)[1] == '.docx']
+    if len(docx_list) > 30:
+        logger.info('当前留存的加班审批表过多。删除模板以外的所有文档')
+        list(map(ot_file_remover, docx_list))
     # if len(docx_list) >= 12:
     #     list(filter(lambda x: re.match(r'^\d{3}\-\d{3,8}$', x),docx_list))
     # 为 true 时在旧的文档上写入。
