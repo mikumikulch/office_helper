@@ -118,18 +118,27 @@ def write_document(checkout_date, checkout_time):
     if len(docx_list) > 30:
         logger.info('当前留存的加班审批表过多。删除模板以外的所有文档')
         list(map(ot_file_remover, docx_list))
-    # if len(docx_list) >= 12:
-    #     list(filter(lambda x: re.match(r'^\d{3}\-\d{3,8}$', x),docx_list))
-    # 为 true 时在旧的文档上写入。
-    if flg:
-        g_doc.save(save_file_path)
-        logger.info('自动写入加班审批表处理结束')
-    # flg 为 false 时，代表目前文档已经写满。将会创建新的文档，并附上时间。并读取模板的内容覆盖掉目前的加班审批表
-    else:
-        g_doc.save(create_file_path)
-        attachment_name = '加班审批表_%s.docx' % datetime.now().strftime('%Y-%m-%d')
-        email_sender.send_mail('【利信办公小助手】加班审批表_%s' % datetime.now().strftime('%Y-%m-%d'), create_file_path,
-                               attachment_name)
-        template_doc = docx.Document('make_document/document/加班审批表_模板.docx')
-        template_doc.save(save_file_path)
-        logger.info('自动写入加班审批表并且发送邮件完毕')
+
+    # 由于加班不一定是连续性的，所以每次加班都发送邮件并且覆盖加班审批表
+    g_doc.save(create_file_path)
+    attachment_name = '加班审批表_%s.docx' % datetime.now().strftime('%Y-%m-%d')
+    email_sender.send_mail('【利信办公小助手】加班审批表_%s' % datetime.now().strftime('%Y-%m-%d'), create_file_path,
+                           attachment_name)
+    template_doc = docx.Document('make_document/document/加班审批表_模板.docx')
+    template_doc.save(save_file_path)
+    logger.info('自动写入加班审批表并且发送邮件完毕')
+
+    # # 为 true 时在旧的文档上写入。
+    # if flg:
+    #     g_doc.save(save_file_path)
+    #     logger.info('自动写入加班审批表处理结束')
+    # # flg 为 false 时，代表目前文档已经写满。将会创建新的文档，并附上时间。并读取模板的内容覆盖掉目前的加班审批表
+    #
+    # else:
+    #     g_doc.save(create_file_path)
+    #     attachment_name = '加班审批表_%s.docx' % datetime.now().strftime('%Y-%m-%d')
+    #     email_sender.send_mail('【利信办公小助手】加班审批表_%s' % datetime.now().strftime('%Y-%m-%d'), create_file_path,
+    #                            attachment_name)
+    #     template_doc = docx.Document('make_document/document/加班审批表_模板.docx')
+    #     template_doc.save(save_file_path)
+    #     logger.info('自动写入加班审批表并且发送邮件完毕')
