@@ -114,7 +114,7 @@ def write_document(checkout_date, checkout_time):
     save_file_path = 'make_document/document/加班审批表.docx'
     create_file_path = 'make_document/document/加班审批表_%s.docx' % (datetime.now().strftime('%Y-%m-%d'))
     # 为防止留存的加班表过度，当文档数量大于30时，删除除模板文档以外的所有文档。
-    docx_list = [x for x in os.listdir('./document') if os.path.splitext(x)[1] == '.docx']
+    docx_list = [x for x in os.listdir('make_document/document') if os.path.splitext(x)[1] == '.docx']
     if len(docx_list) > 30:
         logger.info('当前留存的加班审批表过多。删除模板以外的所有文档')
         list(map(ot_file_remover, docx_list))

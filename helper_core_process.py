@@ -88,7 +88,7 @@ class HelperRobot(object):
             logger.info('您昨日的考勤时间 %s 未满足加班条件。程序处理结束', yesterday)
             logger.info('利信办公小助手机器人运行结束')
 
-
+## TODO 国庆节节假日是不能打卡的。
 logger.info('利信办公小助手机器人运行开始')
 robot = HelperRobot()
 # 最初版本脚本周6或者周7目前是不运行的，暂不支持休息日加班。
