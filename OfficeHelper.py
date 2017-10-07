@@ -56,6 +56,11 @@ class HelperRobot(object):
         # print('昨天%s是星期%s' % (formated_yesterday, yesterday.weekday()))
         return formated_yesterday == attendence_date
 
+
+    def auto_checkout_checkin(self):
+        logger.info('自动打卡功能启动 time %s', datetime.now())
+
+
     # noinspection PyTypeChecker
     def engin_start(self):
         logger.info('开始抓取昨日考勤记录')
@@ -88,11 +93,12 @@ class HelperRobot(object):
             logger.info('您昨日的考勤时间 %s 未满足加班条件。程序处理结束', yesterday)
             logger.info('利信办公小助手机器人运行结束')
 
-## TODO 国庆节节假日是不能打卡的。
+
 logger.info('利信办公小助手机器人运行开始')
 robot = HelperRobot()
 # 最初版本脚本周6或者周7目前是不运行的，暂不支持休息日加班。
 now = datetime.now()
+# TODO 节假日不运行脚本
 if now.weekday() is 5 or now.weekday() is 6:
     logger.info('当前日期是周6或者周日，不运行脚本。')
 else:

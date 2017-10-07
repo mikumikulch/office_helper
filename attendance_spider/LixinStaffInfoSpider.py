@@ -6,6 +6,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
+
 __author__ = 'Chuck Lin'
 
 import gzip
@@ -53,7 +54,13 @@ class LixinStaffInfoSpider(object):
         return data
 
     def get_opener(self, head, openner=None):
-        cookie = cookiejar.CookieJar()
+        """
+        创建一个具备自动处理 cookie 功能的 http openner 模块
+        若 openner 不为空，则重新为 openner 设置 header 信息
+        :param head: dict 类型
+        :param openner: urllib.openner
+        :return:openner
+        """
         handler = urllib.request.HTTPCookieProcessor()
         # gcontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
         if openner is None:
@@ -98,6 +105,12 @@ class LixinStaffInfoSpider(object):
 
     def get_staff_cookie(self, openner,
                          url='https://kaoqin.bangongyi.com/attend/index/index?corpid=wx7a3ce8cf2cdfb04c&t=3'):
+        """
+        获取员工对应的最新 session、以进行后续处理.
+        :param openner: 组装好基本参数的 http urllib 模块对象
+        :param url: 固定的获取最新 session 的链接
+        :return: 获取到最新 session 信息并设置到 cookie 的 http openner 对象
+        """
         logger.info('请求考勤主页面，尝试获取 cookie 信息')
         ssl._create_default_https_context = ssl._create_unverified_context
         openner.open(url)
@@ -109,3 +122,55 @@ class LixinStaffInfoSpider(object):
         self.get_staff_cookie(openner)
         openner_with_staff_cookie = self.reset_cookies(self.__head_for_get_attendance_data, openner)
         return self.get_staff_info(openner_with_staff_cookie)
+
+    def get_server_time(self, openner,
+                        url='https://kaoqin.bangongyi.com/attend/check/get-time?v=1506595896876&_=1506595896882'):
+        """
+        获取 session 对应的服务器时间
+        :param openner:
+        :param url: 固定的获取服务器时间的链接
+        :return:当前服务器时间的 epoch time
+        """
+        logger.info('获取 session 对应的服务器时间')
+        ssl._create_default_https_context = ssl._create_unverified_context
+        response = openner.open(url)
+        ungzip_response = self.__ungzip(response.read()).decode('utf-8')
+        logger.info('session 对应的服务器时间为 %s ' % ungzip_response)
+        return ungzip_response
+
+    def check_clocktime_and_location(self, openner, clocktime, url='https://kaoqin.bangongyi.com/attend/check'):
+        """
+        检查终端坐标与服务器打卡时间是否满足要求
+        :param openner: openner
+        :param clocktime: 打卡时间（服务器时间）
+        :return:json 数组
+        example
+                {
+                "data": {
+                    "url": "\/attend\/check\/success?device_id=34128&device_type=0&date=2017-09-30&userid=6590415"
+                },
+                "errno": 0,
+                "errmsg": "ok"
+                }
+        """
+        logger.info('向服务器确认打卡信息是否满足要求')
+        request_data = parse.urlencode({'validityTime': clocktime, 'device_type': '0',
+                                        'lat': '30.637487771874', 'lng': '104.07350944463',
+                                        'device_id': '34128'}).encode()
+        response = openner.open(url, request_data)
+        ungzip_response = self.__ungzip(response.read()).decode('utf-8')
+        logger.debug('打卡信息确认完毕。%s' % ungzip_response)
+        return ungzip_response
+
+    def cheat(self, openner, clocktime):
+        """
+        向服务器发送打卡请求，实现打卡
+        :param openner:  openner
+        :param clocktime: 打卡时间
+        :return: html 页面
+        """
+        now_date = datetime.now().strftime('%Y-%m-%d')
+        logger.info('向服务器发送打卡请求，打卡日期 %s 打卡时间 %s' % (now_date, clocktime))
+        url = 'https://kaoqin.bangongyi.com/attend/check/success?device_id=34128&device_type=0&date=%s&userid=6590415' % now_date
+        openner.open(url)
+        logger.info('打卡完毕。打卡日期 %s 打卡时间 %s' % (now_date, clocktime))
