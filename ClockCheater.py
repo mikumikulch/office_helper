@@ -28,7 +28,6 @@ class ClockCheater(object):
         super().__init__()
 
     def engin_start(self):
-        logger.info('开始自动打卡')
         # 获取用户当前最新 session 并且保存到 cookie 中
         openner = LixinStaffInfoSpider.get_opener(self.__head_for_get_cookie)
         LixinStaffInfoSpider.get_staff_cookie(openner)
@@ -44,13 +43,13 @@ class ClockCheater(object):
             return
         # 发送打卡请求。打卡时间为当前日期 + sessin 对应的服务器时间
         LixinStaffInfoSpider.cheat(openner, server_time)
-        logger.info('自动打卡结束')
+        logger.info('自动打卡成功。打卡时间：%s' % datetime.fromtimestamp(server_time))
 
 
-logger.info('利信办公小助手机器人运行开始')
 robot = ClockCheater()
 # 最初版本脚本周6或者周7目前是不运行的，暂不支持休息日加班。
 now = datetime.now()
+logger.info('自动打卡开始。当前时间： %s' % now)
 # TODO 节假日不运行脚本
 if now.weekday() is 5 or now.weekday() is 6:
     logger.info('当前日期是周6或者周日，不运行脚本。')
