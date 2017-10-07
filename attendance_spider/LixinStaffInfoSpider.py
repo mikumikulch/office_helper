@@ -6,14 +6,12 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
-
 __author__ = 'Chuck Lin'
 
 import gzip
 import ssl
 import urllib
 from datetime import datetime, timedelta
-from http import cookiejar
 from urllib import request, parse
 
 import logging
@@ -38,10 +36,6 @@ class LixinStaffInfoSpider(object):
 
     def __init__(self) -> None:
         super().__init__()
-
-    # __post_data = {"date": "2017-6", "staffid": "6590415"}
-
-
 
     def __ungzip(self, data):
         try:  # 尝试解压
@@ -83,6 +77,12 @@ class LixinStaffInfoSpider(object):
         return openner
 
     def get_staff_info(self, openner, url='https://kaoqin.bangongyi.com/attend/index/record?_=1498544871927'):
+        """
+        获取员工的当月考勤信息数据。如果今天是月初，则获取上一个月的数据。
+        :param openner: http openner
+        :param url: 固定链接
+        :return: 本月考勤 json 数据
+        """
         logger.info('根据 cookiee 信息请求考勤记录')
         ssl._create_default_https_context = ssl._create_unverified_context
         now = datetime.now()
