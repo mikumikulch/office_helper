@@ -5,14 +5,22 @@
 
 # Version
 
-**Version 1.0**  
+**Version 2.0**  
 
 - 支持自动填写加班审批表，并通过邮件发送到指定邮箱。
+- 支持自动出勤退清打卡功能。
+
+# Features
+
+自动填写调休单填写功能锐意制作中
 
 
 # Environment
 
-施工中
+|环境|版本|支持|备注|
+|--|--|--|--|
+|操作系统|unix-like/windows|是|无|
+|python|python3.x|是|无|
 
 
 # How to work
