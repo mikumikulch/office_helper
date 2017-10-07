@@ -42,5 +42,5 @@ https://www.gitbook.com/book/mikumikulch/chucklin_blog
 # License
 
 
-项目严格遵守 [MIT License](https://choosealicense.com/licenses/mit/) 。你可以在署名原作者的情况下使用任何方式使用本代码，
-但原作者但不承担代码使用后的风险，也没有技术支持的义务。
+项目严格遵守 [MIT License](https://choosealicense.com/licenses/mit/) 。你可以在署名原作者的情况下采用任何方式使用本代码，
+但原作者不承担代码使用后的风险，也没有技术支持的义务。
