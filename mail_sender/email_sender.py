@@ -9,17 +9,14 @@
 
 __author__ = 'Chuck Lin'
 
+import logging
+import smtplib
 from email import encoders
 from email.header import Header
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-import smtplib
-
-import logging
-
-import HelperConfig
-
+from attendance_spider import HelperConfig
 
 # 设置发件人账户与密码，发件服务器，收件人账户
 logger_name = 'office_helper'

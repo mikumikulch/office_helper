@@ -9,14 +9,13 @@
 __author__ = 'Chuck Lin'
 
 import gzip
+import logging
 import ssl
 import urllib
 from datetime import datetime, timedelta
 from urllib import request, parse
 
-import logging
-
-import HelperConfig
+from attendance_spider import HelperConfig
 
 logger_name = 'office_helper'
 logger = logging.getLogger(logger_name)

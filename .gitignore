@@ -90,7 +90,7 @@ ENV/
 # Rope project settings
 .ropeproject
 
-HelperConfig.py
+attendance_spider/HelperConfig.py
 .idea
 
 ### JetBrains template

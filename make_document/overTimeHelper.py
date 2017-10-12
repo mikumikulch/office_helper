@@ -7,7 +7,6 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 import os
-import re
 
 __author__ = 'Chuck Lin'
 
@@ -16,7 +15,7 @@ from datetime import datetime
 import docx
 import logging
 
-import HelperConfig
+from attendance_spider import HelperConfig
 
 from docx.oxml.ns import qn
 from docx.shared import Pt

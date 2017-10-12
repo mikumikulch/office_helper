@@ -9,7 +9,7 @@ import json
 import logging
 from datetime import datetime
 
-import HelperConfig
+from attendance_spider import HelperConfig
 from attendance_spider.LixinStaffInfoSpider import LixinStaffInfoSpider
 
 __author__ = 'Chuck Lin'
