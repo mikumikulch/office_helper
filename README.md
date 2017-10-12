@@ -37,7 +37,19 @@
 5. 同样你也可以邀请作者为您量身定制并协助部署一套利信办公小助手。我会视心情是否接受。
 6. 请作者喝一杯咖啡，可极大提高邀请的成功率。 -> 
 https://www.gitbook.com/book/mikumikulch/chucklin_blog 
-价格随缘，扫码支付即可，
+价格随缘，扫码支付即可。
+
+### 打包与分发
+
+推荐使用 setuptools 打包项目成为 wheels 的方式对代码进行分发。
+你可以参照项目中的 setup.py 与 MANIFEST.in 文件对配置进行调整以满足你的需求。
+
+注意，由于我使用了 MIT 协议，所以请务必不要忘记原作者署名，谢谢。
+ 
+```shell
+cd {workspace_root_path}
+python3 setup.py sdist bdist_wheel
+```
 
 # License
 
