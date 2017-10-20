@@ -43,7 +43,8 @@ def send_mail(mail_title, attachment_path, file_name):
     att = MIMEText(fp.read(), 'base64', 'utf-8')
     att["Content-Type"] = 'application/octet-stream'
     att.add_header('Content-Disposition', 'attachment', filename=('utf-8', '', file_name))
-    encoders.encode_base64(att)
+    # 此处的 encode 不能要，不然会出现收到的 word 打不开有非法字符的问题。
+    # encoders.encode_base64(att)
     msg.attach(att)
 
     # with open(attachment_path, 'rb') as f:
@@ -62,8 +63,9 @@ def send_mail(mail_title, attachment_path, file_name):
 
     try:
         logger.info('开始发送邮件到用户')
-        server = smtplib.SMTP(smtp_server)
-        # server.set_debuglevel(1)
+        # server = smtplib.SMTP(smtp_server)
+        server = smtplib.SMTP_SSL(smtp_server)
+        server.set_debuglevel(1)
         server.login(from_addr_and_user, password)
         server.sendmail(from_addr_and_user, [to_addr], msg.as_string())
         logger.info('邮件发送成功')
