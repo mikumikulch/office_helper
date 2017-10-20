@@ -55,7 +55,7 @@ def reset_form_date_paragraphs(flg):
     now = datetime.now()
 
     # 填写填表日期
-    mutipart_date = '填表日期:%d年%d月%d日' % (now.year, now.month, now.day)
+    mutipart_date = '填表日期%d年%d月%d日' % (now.year, now.month, now.day)
     run = form_date_paragraphs.add_run(mutipart_date, 'Default Paragraph Font')
     run.font.size = Pt(10)
     return g_doc
