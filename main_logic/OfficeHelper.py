@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 
 """
-利信小助手核心程序
+敏感词小助手核心程序
 负责调用其他模块完成任务
 """
 
@@ -13,7 +13,7 @@ import json
 import logging
 from logging.handlers import RotatingFileHandler
 
-from attendance_spider.LixinStaffInfoSpider import LixinStaffInfoSpider
+from attendance_spider.StaffInfoSpider import StaffInfoSpider
 from make_document import overTimeHelper
 from datetime import datetime, timedelta
 
@@ -65,8 +65,8 @@ class HelperRobot(object):
     def engin_start(self):
         logger.info('开始抓取昨日考勤记录')
         # 抓取当月或者上一个月考勤记录
-        lixin_info_spider = LixinStaffInfoSpider()
-        staff_attendance_info_json = json.loads(lixin_info_spider.query_staff_attendance_info())
+        info_spider = StaffInfoSpider()
+        staff_attendance_info_json = json.loads(info_spider.query_staff_attendance_info())
         # 获取当月考勤记录的 dict 数据
         attendance_dict = staff_attendance_info_json['data']['checkDay']
         # 获取记录的日期数据列表
@@ -91,10 +91,10 @@ class HelperRobot(object):
         else:
             yesterday = datetime.fromtimestamp(yesterday_attendance_date).strftime('%Y-%m-%d')
             logger.info('您昨日的考勤时间 %s 未满足加班条件。程序处理结束', yesterday)
-            logger.info('利信办公小助手机器人运行结束')
+            logger.info('敏感词办公小助手机器人运行结束')
 
 
-logger.info('利信办公小助手机器人运行开始')
+logger.info('敏感词办公小助手机器人运行开始')
 robot = HelperRobot()
 # 最初版本脚本周6或者周7目前是不运行的，暂不支持休息日加班。
 now = datetime.now()

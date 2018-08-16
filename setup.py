@@ -20,7 +20,7 @@ setup(
     version='2.0',  # 版本号
     author='Chuck Lin',
     author_email='mikumiku.lch@hotmail.com',
-    description='利信作弊机器人',
+    description='敏感词作弊机器人',
     license='MIT',
     packages=find_packages(),
     include_package_data=True,  # 启用清单文件MANIFEST.in

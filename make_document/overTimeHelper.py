@@ -121,7 +121,7 @@ def write_document(checkout_date, checkout_time):
     # 由于加班不一定是连续性的，所以每次加班都发送邮件并且覆盖加班审批表
     g_doc.save(create_file_path)
     attachment_name = '加班审批表_%s.docx' % datetime.now().strftime('%Y-%m-%d')
-    email_sender.send_mail('【利信办公小助手】加班审批表_%s' % datetime.now().strftime('%Y-%m-%d'), create_file_path,
+    email_sender.send_mail('【敏感词办公小助手】加班审批表_%s' % datetime.now().strftime('%Y-%m-%d'), create_file_path,
                            attachment_name)
     template_doc = docx.Document('make_document/document/加班审批表_模板.docx')
     template_doc.save(save_file_path)
@@ -136,7 +136,7 @@ def write_document(checkout_date, checkout_time):
     # else:
     #     g_doc.save(create_file_path)
     #     attachment_name = '加班审批表_%s.docx' % datetime.now().strftime('%Y-%m-%d')
-    #     email_sender.send_mail('【利信办公小助手】加班审批表_%s' % datetime.now().strftime('%Y-%m-%d'), create_file_path,
+    #     email_sender.send_mail('【敏感词办公小助手】加班审批表_%s' % datetime.now().strftime('%Y-%m-%d'), create_file_path,
     #                            attachment_name)
     #     template_doc = docx.Document('make_document/document/加班审批表_模板.docx')
     #     template_doc.save(save_file_path)

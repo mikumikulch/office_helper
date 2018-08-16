@@ -10,7 +10,7 @@ import logging
 from datetime import datetime
 
 from attendance_spider import HelperConfig
-from attendance_spider.LixinStaffInfoSpider import LixinStaffInfoSpider
+from attendance_spider.StaffInfoSpider import StaffInfoSpider
 
 __author__ = 'Chuck Lin'
 
@@ -29,12 +29,12 @@ class ClockCheater(object):
 
     def engin_start(self):
         # 获取用户当前最新 session 并且保存到 cookie 中
-        openner = LixinStaffInfoSpider.get_opener(self.__head_for_get_cookie)
-        LixinStaffInfoSpider.get_staff_cookie(openner)
+        openner = StaffInfoSpider.get_opener(self.__head_for_get_cookie)
+        StaffInfoSpider.get_staff_cookie(openner)
         # 获取当前 session 的对应服务器时间
-        server_time = LixinStaffInfoSpider.get_server_time(openner)
+        server_time = StaffInfoSpider.get_server_time(openner)
         # 根据获取到的服务器时间，检查坐标与时间
-        check_result = LixinStaffInfoSpider.check_clocktime_and_location(openner, server_time)
+        check_result = StaffInfoSpider.check_clocktime_and_location(openner, server_time)
         # 判断检查结果
         check_result_json = json.load(check_result)
         errmsg = check_result_json['errmsg']
@@ -42,7 +42,7 @@ class ClockCheater(object):
             logger.error('坐标与日期检查出现异常 errmsg %s server_time %s ，处理结束' % (check_result, server_time))
             return
         # 发送打卡请求。打卡时间为当前日期 + sessin 对应的服务器时间
-        LixinStaffInfoSpider.cheat(openner, server_time)
+        StaffInfoSpider.cheat(openner, server_time)
         logger.info('自动打卡成功。打卡时间：%s' % datetime.fromtimestamp(server_time))
 
 

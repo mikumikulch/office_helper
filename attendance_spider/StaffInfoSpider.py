@@ -21,13 +21,13 @@ logger_name = 'office_helper'
 logger = logging.getLogger(logger_name)
 
 """
-'利信员工考勤信息抓取'
+'敏感词员工考勤信息抓取'
 """
 
 __author__ = 'Chuck Lin'
 
 
-class LixinStaffInfoSpider(object):
+class StaffInfoSpider(object):
     # 用于获取 cookie 设置的请求用请求头
     __head_for_get_cookie = HelperConfig.head_for_get_cookie
     # 用于获取请求头参数
@@ -94,9 +94,7 @@ class LixinStaffInfoSpider(object):
         post_data = {"date": formated_month, "staffid": "6590415"}
         post_data = parse.urlencode(post_data).encode()
         response = openner.open(url, post_data)
-        # request = urllib.request.Request(self.request_url, post_data, headers=LixinStaffInfoSpider.head)
         # 通过openner发送请求
-        # response = urllib.request.urlopen(request)
         ungzip_response = self.__ungzip(response.read()).decode('utf-8')
         logger.debug(ungzip_response)
         logger.info('请求考勤记录成功')
